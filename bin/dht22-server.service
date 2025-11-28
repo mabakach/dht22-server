@@ -1,0 +1,14 @@
+[Unit]
+Description=DHT22 Server Spring Boot Application
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/home/%i/dht22-server
+ExecStart=/usr/bin/java -jar /home/%i/dht22-server/target/dht22-server.jar
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
