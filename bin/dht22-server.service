@@ -6,7 +6,9 @@ After=network.target
 Type=simple
 User=%i
 WorkingDirectory=/home/%i/dht22-server
-ExecStart=/usr/bin/java -Xms32m -Xmx128m -XX:+UseSerialGC -jar /home/%i/dht22-server/target/dht22-server.jar
+ExecStart=/usr/bin/java -Xms32m -Xmx128m -XX:+UseSerialGC -jar /home/%i/dht22-server/dht22-server.jar
+StandardOutput=null
+StandardError=null
 Restart=on-failure
 RestartSec=10
 
