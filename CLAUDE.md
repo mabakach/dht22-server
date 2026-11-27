@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Spring Boot 3.5 / Java 21 REST server exposing DHT-22 temperature/humidity readings from a Raspberry Pi. Java does not touch GPIO: it shells out to a Python script.
+Spring Boot 4.2 / Java 21 REST server exposing DHT-22 temperature/humidity readings from a Raspberry Pi. Java does not touch GPIO: it shells out to a Python script.
 
 ## Commands
 

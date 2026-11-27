@@ -1,7 +1,7 @@
 package ch.mabaka.dht22_server.service;
 
 import ch.mabaka.dht22_server.domain.TemperatureHumidity;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class Dht22SensorService {
     @Value("${dht22.python.interpreter}")
     private String pythonInterpreter;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonMapper objectMapper = new JsonMapper();
     private TemperatureHumidity lastResult;
 
     private static final Logger logger = LoggerFactory.getLogger(Dht22SensorService.class);
