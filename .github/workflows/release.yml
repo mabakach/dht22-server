@@ -2,8 +2,13 @@ name: Release
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -24,10 +29,18 @@ jobs:
         run: mvn -B clean verify
 
       - name: Create GitHub release
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "${GITHUB_REF_NAME}" \
-            --generate-notes \
-            "target/dht22-server-v${GITHUB_REF_NAME}-dist.zip"
+          version=$(mvn -q -B -DforceStdout help:evaluate -Dexpression=project.version)
+          zip=$(ls target/*-dist.zip)
+          if [[ "$version" == *-SNAPSHOT ]]; then
+            tag="${version%-SNAPSHOT}-build.${GITHUB_RUN_NUMBER}"
+            gh release create "$tag" "$zip" \
+              --target "$GITHUB_SHA" --title "$tag" --prerelease --generate-notes
+          else
+            # release-plugin commit: tag already exists
+            gh release create "$version" "$zip" \
+              --target "$GITHUB_SHA" --title "$version" --generate-notes
+          fi
