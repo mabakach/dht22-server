@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and test
+        run: mvn -B clean verify
+
+      - name: Create GitHub release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(mvn -q -B -DforceStdout help:evaluate -Dexpression=project.version)
+          zip=$(ls target/*-dist.zip)
+          if [[ "$version" == *-SNAPSHOT ]]; then
+            tag="${version%-SNAPSHOT}-build.${GITHUB_RUN_NUMBER}"
+            gh release create "$tag" "$zip" \
+              --target "$GITHUB_SHA" --title "$tag" --prerelease --generate-notes
+          else
+            # release-plugin commit: tag already exists
+            gh release create "$version" "$zip" \
+              --target "$GITHUB_SHA" --title "$version" --generate-notes
+          fi
